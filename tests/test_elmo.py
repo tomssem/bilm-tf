@@ -20,7 +20,11 @@ class TestWeightedLayers(unittest.TestCase):
         self.sess.close()
 
     def setUp(self):
-        self.sess = tf.Session()
+        from tensorflow.compat.v1 import ConfigProto
+
+        config = ConfigProto()
+        config.gpu_options.allow_growth = True
+        self.sess = tf.Session(config=config)
 
     def _check_weighted_layer(self, l2_coef, do_layer_norm, use_top_only):
         # create the Batcher

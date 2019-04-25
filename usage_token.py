@@ -87,6 +87,9 @@ with tf.variable_scope('', reuse=True):
         'output', question_embeddings_op, l2_coef=0.0
     )
 
+from tensorflow.compat.v1 import ConfigProto
+config = ConfigProto()
+config.gpu_options.allow_growth = True
 
 with tf.Session() as sess:
     # It is necessary to initialize variables once before running inference.

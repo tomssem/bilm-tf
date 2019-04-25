@@ -62,7 +62,11 @@ tokenized_question = [
     ['What', 'are', 'biLMs', 'useful', 'for', '?'],
 ]
 
-with tf.Session() as sess:
+from tensorflow.compat.v1 import ConfigProto
+config = ConfigProto()
+config.gpu_options.allow_growth = True
+
+with tf.Session(config=config) as sess:
     # It is necessary to initialize variables once before running inference.
     sess.run(tf.global_variables_initializer())
 

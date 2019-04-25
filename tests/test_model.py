@@ -42,7 +42,11 @@ def _load_sentences_embeddings():
 
 class TestBidirectionalLanguageModel(unittest.TestCase):
     def setUp(self):
-        self.sess = tf.Session()
+        from tensorflow.compat.v1 import ConfigProto
+
+        config = ConfigProto()
+        config.gpu_options.allow_growth = True
+        self.sess = tf.Session(config=config)
 
     def tearDown(self):
         tf.reset_default_graph()
@@ -132,7 +136,11 @@ class TestBidirectionalLanguageModel(unittest.TestCase):
 
 class TestBidirectionalLanguageModelTokenInput(unittest.TestCase):
     def setUp(self):
-        self.sess = tf.Session()
+        from tensorflow.compat.v1 import ConfigProto
+
+        config = ConfigProto()
+        config.gpu_options.allow_growth = True
+        self.sess = tf.Session(config=config)
         self.tmp_dir = tempfile.mkdtemp()
 
     def tearDown(self):
@@ -167,7 +175,11 @@ class TestBidirectionalLanguageModelTokenInput(unittest.TestCase):
         )
         tf.reset_default_graph()
         self.sess.close()
-        self.sess = tf.Session()
+        from tensorflow.compat.v1 import ConfigProto
+
+        config = ConfigProto()
+        config.gpu_options.allow_growth = True
+        self.sess = tf.Session(config=config)
 
         # create the Batcher
         batcher = TokenBatcher(vocab_file)

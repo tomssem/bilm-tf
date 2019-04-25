@@ -625,6 +625,7 @@ def dump_token_embeddings(vocab_file, options_file, weight_file, outfile):
     embeddings = np.zeros((n_tokens, embed_dim), dtype=DTYPE)
 
     config = tf.ConfigProto(allow_soft_placement=True)
+    config.gpu_options.allow_growth = True
     with tf.Session(config=config) as sess:
         sess.run(tf.global_variables_initializer())
         for k in range(n_tokens):
@@ -637,7 +638,7 @@ def dump_token_embeddings(vocab_file, options_file, weight_file, outfile):
 
     with h5py.File(outfile, 'w') as fout:
         ds = fout.create_dataset(
-            'embedding', embeddings.shape, dtype='float32', data=embeddings
+            'embedding', embeddings.shape, dtype=DTYPE, data=embeddings
         )
 
 def dump_bilm_embeddings(vocab_file, dataset_file, options_file,
@@ -656,6 +657,7 @@ def dump_bilm_embeddings(vocab_file, dataset_file, options_file,
     ops = model(ids_placeholder)
 
     config = tf.ConfigProto(allow_soft_placement=True)
+    config.gpu_options.allow_growth = True
     with tf.Session(config=config) as sess:
         sess.run(tf.global_variables_initializer())
         sentence_id = 0
@@ -668,7 +670,7 @@ def dump_bilm_embeddings(vocab_file, dataset_file, options_file,
                 )
                 ds = fout.create_dataset(
                     '{}'.format(sentence_id),
-                    embeddings.shape[1:], dtype='float32',
+                    embeddings.shape[1:], dtype=DTYPE,
                     data=embeddings[0, :, :, :]
                 )
 

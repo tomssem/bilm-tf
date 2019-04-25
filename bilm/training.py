@@ -742,7 +742,7 @@ def train(options, data, n_gpus, tf_save_dir, tf_log_dir,
 
         # apply the gradients to create the training operation
         train_op = opt.apply_gradients(grads, global_step=global_step)
-
+        print("[training.py:745] DEBUGGING STRING ==> ", 4)
         # histograms of variables
         for v in tf.global_variables():
             histogram_summaries.append(tf.summary.histogram(v.name.replace(":", "_"), v))
@@ -762,8 +762,13 @@ def train(options, data, n_gpus, tf_save_dir, tf_log_dir,
 
     # do the training loop
     bidirectional = options.get('bidirectional', False)
-    with tf.Session(config=tf.ConfigProto(
-            allow_soft_placement=True)) as sess:
+
+    from tensorflow.compat.v1 import ConfigProto
+    config = ConfigProto()
+    config.gpu_options.allow_growth = True
+    config.allow_soft_placement = True
+
+    with tf.Session(config=config) as sess:
         sess.run(init)
 
         # load the checkpoint data if needed
@@ -836,6 +841,8 @@ def train(options, data, n_gpus, tf_save_dir, tf_log_dir,
         t1 = time.time()
         data_gen = data.iter_batches(batch_size * n_gpus, unroll_steps)
         for batch_no, batch in enumerate(data_gen, start=1):
+            print("batch_no: ", batch_no)
+            print("n_batches_total: ", n_batches_total)
 
             # slice the input in the batch for the feed_dict
             X = batch
@@ -891,7 +898,7 @@ def train(options, data, n_gpus, tf_save_dir, tf_log_dir,
                 checkpoint_path = os.path.join(tf_save_dir, 'model.ckpt')
                 saver.save(sess, checkpoint_path, global_step=global_step)
 
-            if batch_no == n_batches_total:
+            if batch_no >= n_batches_total:
                 # done training!
                 break
 
@@ -1102,7 +1109,7 @@ def dump_weights(tf_save_dir, outfile):
                 print("Saving variable {0} with name {1}".format(
                     v.name, outname))
                 shape = v.get_shape().as_list()
-                dset = fout.create_dataset(outname, shape, dtype='float32')
+                dset = fout.create_dataset(outname, shape, dtype=DTYPE)
                 values = sess.run([v])[0]
                 dset[...] = values
 

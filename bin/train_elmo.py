@@ -12,8 +12,8 @@ def main(args):
     vocab = load_vocab(args.vocab_file, 50)
 
     # define the options
-    batch_size = 128  # batch size for each GPU
-    n_gpus = 3
+    batch_size = 128 + 64  # batch size for each GPU
+    n_gpus = 1
 
     # number of tokens in training data (this for 1B Word Benchmark)
     n_train_tokens = 768648884
@@ -28,8 +28,7 @@ def main(args):
        [3, 64],
        [4, 128],
        [5, 256],
-       [6, 512],
-       [7, 1024]],
+       [6, 512],],
       'max_characters_per_token': 50,
       'n_characters': 261,
       'n_highway': 2},
@@ -38,10 +37,10 @@ def main(args):
     
      'lstm': {
       'cell_clip': 3,
-      'dim': 4096,
+      'dim': 2048,
       'n_layers': 2,
       'proj_clip': 3,
-      'projection_dim': 512,
+      'projection_dim': 256,
       'use_skip_connections': True},
     
      'all_clip_norm_val': 10.0,
@@ -52,6 +51,7 @@ def main(args):
      'n_tokens_vocab': vocab.size,
      'unroll_steps': 20,
      'n_negative_samples_batch': 8192,
+     'sample_softmax': True,
     }
 
     prefix = args.train_prefix

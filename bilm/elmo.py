@@ -1,3 +1,4 @@
+DTYPE = 'float32'
 
 import tensorflow as tf
 
@@ -44,7 +45,7 @@ def weight_layers(name, bilm_ops, l2_coef=None,
 
     with tf.control_dependencies([lm_embeddings, mask]):
         # Cast the mask and broadcast for layer use.
-        mask_float = tf.cast(mask, 'float32')
+        mask_float = tf.cast(mask, DTYPE)
         broadcast_mask = tf.expand_dims(mask_float, axis=-1)
 
         def _do_ln(x):
